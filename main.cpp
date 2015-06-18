@@ -97,27 +97,6 @@ int main() {
 
 	test1();
 	test2();
-
-	//int* a = (int*) heapManager.Alloc( 5000 );
-	//for( int i = 0; i < 5000 / 4 + 1; ++i ) {
-	//	a[i] = 5;
-	//}
-	//heapManager.Free( a );
-	//int* b = (int*) heapManager.Alloc( 4 );
-	//heapManager.Destroy();
-	//for( int i = 0; i < 5000 / 4 + 1; ++i ) {
-	//	a[i] = 5;
-	//}
-
-	/*A* a = new A;
-	a->a = 4;
-	std::cout << a->a;
-	A* b = new A[5000];
-	for( int i = 0; i < 5000; ++i ) {
-		b[i].a = i;
-	}
-	delete a;*/
-
 	heapManager.Destroy();
 	return 0;
 }

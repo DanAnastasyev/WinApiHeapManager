@@ -17,46 +17,46 @@ public:
 	void CHeapManager::Destroy();
 
 private:
-	// Округление до ближайшего большего числа, кратного roundSize
+	// РћРєСЂСѓРіР»РµРЅРёРµ РґРѕ Р±Р»РёР¶Р°Р№С€РµРіРѕ Р±РѕР»СЊС€РµРіРѕ С‡РёСЃР»Р°, РєСЂР°С‚РЅРѕРіРѕ roundSize
 	int round( int a, int roundSize );
 
-	// Ищет больший свободный блок с наиболее близким размером
+	// РС‰РµС‚ Р±РѕР»СЊС€РёР№ СЃРІРѕР±РѕРґРЅС‹Р№ Р±Р»РѕРє СЃ РЅР°РёР±РѕР»РµРµ Р±Р»РёР·РєРёРј СЂР°Р·РјРµСЂРѕРј
 	void findAppropriateBlock( int size, int& freeBlockPtr, int& smallBlockAddr, 
 		int& mediumBlockAddr, int& largeBlockAddr );
 
-	// Меняем структуру свободных блоков
+	// РњРµРЅСЏРµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃРІРѕР±РѕРґРЅС‹С… Р±Р»РѕРєРѕРІ
 	void changeBlockStructure( int size, int& newSize, int freeBlockPtr, int smallBlockAddr, 
 		int mediumBlockAddr, int largeBlockAddr );
 
-	// Добавляем отрезанный кусок
+	// Р”РѕР±Р°РІР»СЏРµРј РѕС‚СЂРµР·Р°РЅРЅС‹Р№ РєСѓСЃРѕРє
 	void addFreeBlock( int size, int& newSize, int freeBlockPtr, int smallBlockAddr, 
 		int mediumBlockAddr, int largeBlockAddr );
 	
-	// Найти подходящий маленький свободный смежный блок
+	// РќР°Р№С‚Рё РїРѕРґС…РѕРґСЏС‰РёР№ РјР°Р»РµРЅСЊРєРёР№ СЃРІРѕР±РѕРґРЅС‹Р№ СЃРјРµР¶РЅС‹Р№ Р±Р»РѕРє
 	void findSmallFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize );
 	void findMediumFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize );
 	void findLargeFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize );
 
 	int* lpvReservedMem;
-	// сколько памяти в начале выделено
+	// СЃРєРѕР»СЊРєРѕ РїР°РјСЏС‚Рё РІ РЅР°С‡Р°Р»Рµ РІС‹РґРµР»РµРЅРѕ
 	int minSize;
-	// сколько памяти зарезервировано
+	// СЃРєРѕР»СЊРєРѕ РїР°РјСЏС‚Рё Р·Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅРѕ
 	int maxSize;
 
-	// размер страницы в памяти
+	// СЂР°Р·РјРµСЂ СЃС‚СЂР°РЅРёС†С‹ РІ РїР°РјСЏС‚Рё
 	int pageSize;
 
-	// Максимальный размер маленького блока
+	// РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РјР°Р»РµРЅСЊРєРѕРіРѕ Р±Р»РѕРєР°
 	int minBlockSize;
-	// Максимальный размер среднего блока
+	// РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ СЃСЂРµРґРЅРµРіРѕ Р±Р»РѕРєР°
 	int mediumBlockSize;
 
 	std::vector<int> pages;
-	// свободные блоки
+	// СЃРІРѕР±РѕРґРЅС‹Рµ Р±Р»РѕРєРё
 	std::vector<int> smallBlocks;
-	// пары <адрес, размер> с размером от 4 до 128
+	// РїР°СЂС‹ <Р°РґСЂРµСЃ, СЂР°Р·РјРµСЂ> СЃ СЂР°Р·РјРµСЂРѕРј РѕС‚ 4 РґРѕ 128
 	std::map<int, int> mediumBlocks;
-	// пары <адрес, размер> с размером больше 128
+	// РїР°СЂС‹ <Р°РґСЂРµСЃ, СЂР°Р·РјРµСЂ> СЃ СЂР°Р·РјРµСЂРѕРј Р±РѕР»СЊС€Рµ 128
 	std::map<int, int> largeBlocks;
 
 	std::set<int> allocatedBlocks;

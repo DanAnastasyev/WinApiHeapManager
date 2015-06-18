@@ -4,7 +4,7 @@
 
 void CHeapManager::Create( int _minSize, int _maxSize )
 {
-	// Определяем гранулярность
+	// РћРїСЂРµРґРµР»СЏРµРј РіСЂР°РЅСѓР»СЏСЂРЅРѕСЃС‚СЊ
 	SYSTEM_INFO siSysInfo; 
 	::ZeroMemory( &siSysInfo, sizeof(SYSTEM_INFO) );
 	::GetSystemInfo( &siSysInfo );
@@ -19,9 +19,9 @@ void CHeapManager::Create( int _minSize, int _maxSize )
 	minSize = _minSize;
 	maxSize = _maxSize;
 
-	// Добиваем minSize до кратного размеру страницы
+	// Р”РѕР±РёРІР°РµРј minSize РґРѕ РєСЂР°С‚РЅРѕРіРѕ СЂР°Р·РјРµСЂСѓ СЃС‚СЂР°РЅРёС†С‹
 	minSize = round( minSize, pageSize );
-	// Добиваем maxSize до кратного dwAllocationGranularity
+	// Р”РѕР±РёРІР°РµРј maxSize РґРѕ РєСЂР°С‚РЅРѕРіРѕ dwAllocationGranularity
 	maxSize = round( maxSize, dwAllocationGranularity );
 	if( minSize > maxSize ) {
 		throw std::exception( "minSize > maxSize" );
@@ -38,7 +38,7 @@ void CHeapManager::Create( int _minSize, int _maxSize )
 		pages.push_back( 0 );
 	}
 
-	// Работаем с минимальным размером - 4 байта, принимаем его за единицу 
+	// Р Р°Р±РѕС‚Р°РµРј СЃ РјРёРЅРёРјР°Р»СЊРЅС‹Рј СЂР°Р·РјРµСЂРѕРј - 4 Р±Р°Р№С‚Р°, РїСЂРёРЅРёРјР°РµРј РµРіРѕ Р·Р° РµРґРёРЅРёС†Сѓ 
 	minSize /= sizeof(int);
 	maxSize /= sizeof(int);
 
@@ -57,11 +57,11 @@ void CHeapManager::Create( int _minSize, int _maxSize )
 void CHeapManager::findAppropriateBlock(int size, int& freeBlockPtr, int& smallBlockAddr, 
 	int& mediumBlockAddr, int& largeBlockAddr)
 {
-	// Ищем блок подходящего размера среди маленьких свободных блоков
+	// РС‰РµРј Р±Р»РѕРє РїРѕРґС…РѕРґСЏС‰РµРіРѕ СЂР°Р·РјРµСЂР° СЃСЂРµРґРё РјР°Р»РµРЅСЊРєРёС… СЃРІРѕР±РѕРґРЅС‹С… Р±Р»РѕРєРѕРІ
 	if( size <= minBlockSize ) {
 		for( int i = 0; i < smallBlocks.size(); ++i ) {
-			// Если размер блока больше чем нужный размер (+1 для записи этого размера)
-			// + если размер его более подходящий
+			// Р•СЃР»Рё СЂР°Р·РјРµСЂ Р±Р»РѕРєР° Р±РѕР»СЊС€Рµ С‡РµРј РЅСѓР¶РЅС‹Р№ СЂР°Р·РјРµСЂ (+1 РґР»СЏ Р·Р°РїРёСЃРё СЌС‚РѕРіРѕ СЂР°Р·РјРµСЂР°)
+			// + РµСЃР»Рё СЂР°Р·РјРµСЂ РµРіРѕ Р±РѕР»РµРµ РїРѕРґС…РѕРґСЏС‰РёР№
 			if( *(lpvReservedMem + smallBlocks[i]) >= size + 1 && 
 				( freeBlockPtr == -1 || freeBlockPtr != -1 && *(lpvReservedMem + freeBlockPtr) > *(lpvReservedMem + smallBlocks[i]) ) ) 
 			{
@@ -70,7 +70,7 @@ void CHeapManager::findAppropriateBlock(int size, int& freeBlockPtr, int& smallB
 			}
 		}
 	}
-	// Ищем блок подходящего размера среди средних свободных блоков
+	// РС‰РµРј Р±Р»РѕРє РїРѕРґС…РѕРґСЏС‰РµРіРѕ СЂР°Р·РјРµСЂР° СЃСЂРµРґРё СЃСЂРµРґРЅРёС… СЃРІРѕР±РѕРґРЅС‹С… Р±Р»РѕРєРѕРІ
 	if( size > minBlockSize && size <= mediumBlockSize || freeBlockPtr == -1 ) {
 		int minFreeBlockSize = -1;
 		for( auto it = mediumBlocks.begin(); it != mediumBlocks.end(); ++it ) {
@@ -80,7 +80,7 @@ void CHeapManager::findAppropriateBlock(int size, int& freeBlockPtr, int& smallB
 			}
 		}
 	} 
-	// Ищем блок подходящего размера среди больших свободных блоков
+	// РС‰РµРј Р±Р»РѕРє РїРѕРґС…РѕРґСЏС‰РµРіРѕ СЂР°Р·РјРµСЂР° СЃСЂРµРґРё Р±РѕР»СЊС€РёС… СЃРІРѕР±РѕРґРЅС‹С… Р±Р»РѕРєРѕРІ
 	if( size > mediumBlockSize || freeBlockPtr == -1 ) {
 		int minFreeBlockSize = -1;
 		for( auto it = largeBlocks.begin(); it != largeBlocks.end(); ++it ) {
@@ -96,7 +96,7 @@ void CHeapManager::findAppropriateBlock(int size, int& freeBlockPtr, int& smallB
 void CHeapManager::changeBlockStructure( int size, int& newSize, int freeBlockPtr, 
 	int smallBlockAddr, int mediumBlockAddr, int largeBlockAddr )
 {
-	// Отрезаем от свободного блока, в котором будем выделять память
+	// РћС‚СЂРµР·Р°РµРј РѕС‚ СЃРІРѕР±РѕРґРЅРѕРіРѕ Р±Р»РѕРєР°, РІ РєРѕС‚РѕСЂРѕРј Р±СѓРґРµРј РІС‹РґРµР»СЏС‚СЊ РїР°РјСЏС‚СЊ
 	if( smallBlockAddr != -1 ) {
 		newSize = *(lpvReservedMem + smallBlocks[smallBlockAddr]) - size - 1;
 		smallBlocks.erase( smallBlocks.begin() + smallBlockAddr );
@@ -113,9 +113,9 @@ void CHeapManager::addFreeBlock( int size, int& newSize, int freeBlockPtr,
 	int smallBlockAddr, int mediumBlockAddr, int largeBlockAddr )
 {
 	if( newSize > 0 && newSize <= minBlockSize ) {
-		// Адрес аллокированного блока + 1 - начало блока
-		// + size - размер блока
-		// + 1 - начало свободного блока
+		// РђРґСЂРµСЃ Р°Р»Р»РѕРєРёСЂРѕРІР°РЅРЅРѕРіРѕ Р±Р»РѕРєР° + 1 - РЅР°С‡Р°Р»Рѕ Р±Р»РѕРєР°
+		// + size - СЂР°Р·РјРµСЂ Р±Р»РѕРєР°
+		// + 1 - РЅР°С‡Р°Р»Рѕ СЃРІРѕР±РѕРґРЅРѕРіРѕ Р±Р»РѕРєР°
 		smallBlocks.push_back( smallBlockAddr + size + 1 );
 		*(lpvReservedMem + smallBlockAddr + size + 1) = newSize;
 	} else if( newSize > minBlockSize && newSize <= mediumBlockSize ) {
@@ -131,23 +131,23 @@ void* CHeapManager::Alloc( int size )
 	size = round( size, 4 );
 	size /= sizeof(int);
 
-	// Ищем свободный блок с наиболее подходящими размерами
+	// РС‰РµРј СЃРІРѕР±РѕРґРЅС‹Р№ Р±Р»РѕРє СЃ РЅР°РёР±РѕР»РµРµ РїРѕРґС…РѕРґСЏС‰РёРјРё СЂР°Р·РјРµСЂР°РјРё
 	int freeBlockPtr = -1;
 	int smallBlockAddr = -1;
 	int mediumBlockAddr = -1;
 	int largeBlockAddr = -1;
 
-	// Ищем подходящий блок
+	// РС‰РµРј РїРѕРґС…РѕРґСЏС‰РёР№ Р±Р»РѕРє
 	findAppropriateBlock( size, freeBlockPtr, smallBlockAddr, mediumBlockAddr, largeBlockAddr );
 	
-	// Меняем структуру свободных блоков
+	// РњРµРЅСЏРµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃРІРѕР±РѕРґРЅС‹С… Р±Р»РѕРєРѕРІ
 	int newSize = -1;
 	changeBlockStructure( size, newSize, freeBlockPtr, smallBlockAddr, mediumBlockAddr, largeBlockAddr );
 
-	// Добавляем отрезанный кусок
+	// Р”РѕР±Р°РІР»СЏРµРј РѕС‚СЂРµР·Р°РЅРЅС‹Р№ РєСѓСЃРѕРє
 	addFreeBlock( size, newSize, freeBlockPtr, smallBlockAddr, mediumBlockAddr, largeBlockAddr );
 
-	// Увеличиваем счетчик числа блоков на странице
+	// РЈРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє С‡РёСЃР»Р° Р±Р»РѕРєРѕРІ РЅР° СЃС‚СЂР°РЅРёС†Рµ
 	for( int i = (freeBlockPtr / minBlockSize); i <= ((freeBlockPtr + size + 1) / minBlockSize); ++i ) {
 		if( pages[i] == 0 ) {
 			::VirtualAlloc( lpvReservedMem + i * minBlockSize, pageSize, MEM_COMMIT, PAGE_READWRITE );
@@ -164,7 +164,7 @@ void* CHeapManager::Alloc( int size )
 
 void CHeapManager::findSmallFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize )
 {
-	// Ищем блок после этого или перед ним
+	// РС‰РµРј Р±Р»РѕРє РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РёР»Рё РїРµСЂРµРґ РЅРёРј
 	for( int i = 0; i < smallBlocks.size(); ++i ) {
 		if( smallBlocks[i] == endPtr ) {
 			blockSize += *(lpvReservedMem + smallBlocks[i]);
@@ -180,19 +180,19 @@ void CHeapManager::findSmallFreeBlock( int& beginPtr, int& endPtr, int& blockSiz
 
 void CHeapManager::findMediumFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize )
 {
-	// Первый с началом > beginPtr
+	// РџРµСЂРІС‹Р№ СЃ РЅР°С‡Р°Р»РѕРј > beginPtr
 	auto neighbourPtr = mediumBlocks.lower_bound( beginPtr );
-	// Смежный блок может начинаться после конца этого
+	// РЎРјРµР¶РЅС‹Р№ Р±Р»РѕРє РјРѕР¶РµС‚ РЅР°С‡РёРЅР°С‚СЊСЃСЏ РїРѕСЃР»Рµ РєРѕРЅС†Р° СЌС‚РѕРіРѕ
 	if( neighbourPtr != mediumBlocks.end() && neighbourPtr->first == endPtr ) {
 		blockSize += neighbourPtr->second;
 		endPtr += neighbourPtr->second;
 		mediumBlocks.erase( neighbourPtr );
 	}
-	// Cмежный блок может идти перед идущим за этим
+	// CРјРµР¶РЅС‹Р№ Р±Р»РѕРє РјРѕР¶РµС‚ РёРґС‚Рё РїРµСЂРµРґ РёРґСѓС‰РёРј Р·Р° СЌС‚РёРј
 	neighbourPtr = mediumBlocks.lower_bound( beginPtr );
 	if( !mediumBlocks.empty() ) {
 		--neighbourPtr;
-		// Его адрес + число выделенных байт + 1 = началу этого блока
+		// Р•РіРѕ Р°РґСЂРµСЃ + С‡РёСЃР»Рѕ РІС‹РґРµР»РµРЅРЅС‹С… Р±Р°Р№С‚ + 1 = РЅР°С‡Р°Р»Сѓ СЌС‚РѕРіРѕ Р±Р»РѕРєР°
 		if( neighbourPtr != mediumBlocks.end() && neighbourPtr->first + neighbourPtr->second == beginPtr ) {
 			blockSize += neighbourPtr->second;
 			beginPtr -= neighbourPtr->second;
@@ -204,19 +204,19 @@ void CHeapManager::findMediumFreeBlock( int& beginPtr, int& endPtr, int& blockSi
 
 void CHeapManager::findLargeFreeBlock( int& beginPtr, int& endPtr, int& blockSize, int& memSize )
 {
-	// Первый с началом > beginPtr
+	// РџРµСЂРІС‹Р№ СЃ РЅР°С‡Р°Р»РѕРј > beginPtr
 	auto neighbourPtr = largeBlocks.lower_bound( beginPtr );
-	// Смежный блок может начинаться после конца этого
+	// РЎРјРµР¶РЅС‹Р№ Р±Р»РѕРє РјРѕР¶РµС‚ РЅР°С‡РёРЅР°С‚СЊСЃСЏ РїРѕСЃР»Рµ РєРѕРЅС†Р° СЌС‚РѕРіРѕ
 	if( neighbourPtr != largeBlocks.end() && neighbourPtr->first == endPtr ) {
 		blockSize += neighbourPtr->second;
 		endPtr += neighbourPtr->second;
 		largeBlocks.erase( neighbourPtr );
 	}
-	// Cмежный блок может идти перед идущим за этим
+	// CРјРµР¶РЅС‹Р№ Р±Р»РѕРє РјРѕР¶РµС‚ РёРґС‚Рё РїРµСЂРµРґ РёРґСѓС‰РёРј Р·Р° СЌС‚РёРј
 	neighbourPtr = largeBlocks.lower_bound( beginPtr );
 	if( !largeBlocks.empty() ) {
 		--neighbourPtr;
-		// Его адрес + число выделенных байт + 1 = началу этого блока
+		// Р•РіРѕ Р°РґСЂРµСЃ + С‡РёСЃР»Рѕ РІС‹РґРµР»РµРЅРЅС‹С… Р±Р°Р№С‚ + 1 = РЅР°С‡Р°Р»Сѓ СЌС‚РѕРіРѕ Р±Р»РѕРєР°
 		if( neighbourPtr != largeBlocks.end() &&  neighbourPtr->first + neighbourPtr->second == beginPtr ) {
 			blockSize += neighbourPtr->second;
 			beginPtr -= neighbourPtr->second;
@@ -229,21 +229,21 @@ void CHeapManager::findLargeFreeBlock( int& beginPtr, int& endPtr, int& blockSiz
 void CHeapManager::Free( void* mem )
 {
 	int* ref = (int*) mem;
-	int beginPtr = ref - lpvReservedMem - 1; // указатель на начало очищаемого блока
-	int endPtr = beginPtr + *(ref - 1) + 1;  // указатель на конец очищаемого блока
-	int blockSize = *(ref - 1) + 1;			 // начало + смещение для числа записанных байт + число записанных байт
-	int memSize = blockSize;				 // размер очищаемой памяти
+	int beginPtr = ref - lpvReservedMem - 1; // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ РѕС‡РёС‰Р°РµРјРѕРіРѕ Р±Р»РѕРєР°
+	int endPtr = beginPtr + *(ref - 1) + 1;  // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєРѕРЅРµС† РѕС‡РёС‰Р°РµРјРѕРіРѕ Р±Р»РѕРєР°
+	int blockSize = *(ref - 1) + 1;			 // РЅР°С‡Р°Р»Рѕ + СЃРјРµС‰РµРЅРёРµ РґР»СЏ С‡РёСЃР»Р° Р·Р°РїРёСЃР°РЅРЅС‹С… Р±Р°Р№С‚ + С‡РёСЃР»Рѕ Р·Р°РїРёСЃР°РЅРЅС‹С… Р±Р°Р№С‚
+	int memSize = blockSize;				 // СЂР°Р·РјРµСЂ РѕС‡РёС‰Р°РµРјРѕР№ РїР°РјСЏС‚Рё
 
-	// Ищем смежный маленький блок
+	// РС‰РµРј СЃРјРµР¶РЅС‹Р№ РјР°Р»РµРЅСЊРєРёР№ Р±Р»РѕРє
 	findSmallFreeBlock( beginPtr, endPtr, blockSize, memSize );
 
-	// Ищем смежный средний блок
+	// РС‰РµРј СЃРјРµР¶РЅС‹Р№ СЃСЂРµРґРЅРёР№ Р±Р»РѕРє
 	findMediumFreeBlock( beginPtr, endPtr, blockSize, memSize );
 
-	// Смежный большой блок
+	// РЎРјРµР¶РЅС‹Р№ Р±РѕР»СЊС€РѕР№ Р±Р»РѕРє
 	findLargeFreeBlock( beginPtr, endPtr, blockSize, memSize );
 
-	// Добавляем новый блок
+	// Р”РѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Р№ Р±Р»РѕРє
 	if( blockSize <= minBlockSize ) {
 		smallBlocks.push_back( beginPtr );
 		*(lpvReservedMem + beginPtr) = blockSize;
@@ -253,7 +253,7 @@ void CHeapManager::Free( void* mem )
 		largeBlocks[beginPtr] = blockSize;
 	}
 
-	// Очищаем освободившиеся страницы
+	// РћС‡РёС‰Р°РµРј РѕСЃРІРѕР±РѕРґРёРІС€РёРµСЃСЏ СЃС‚СЂР°РЅРёС†С‹
 	for( int i = (ref - lpvReservedMem - 1) / minBlockSize;
 		i <= ((ref - lpvReservedMem - 1 + memSize) / minBlockSize) && i < pages.size(); 
 		++i) 
@@ -263,13 +263,13 @@ void CHeapManager::Free( void* mem )
 			::VirtualFree( lpvReservedMem + i * minBlockSize, pageSize, MEM_DECOMMIT );
 		}
 	}
-	// Удаляем блок из списка алокированных
+	// РЈРґР°Р»СЏРµРј Р±Р»РѕРє РёР· СЃРїРёСЃРєР° Р°Р»РѕРєРёСЂРѕРІР°РЅРЅС‹С…
 	allocatedBlocks.erase( ref - lpvReservedMem - 1 );
 }
 
 void CHeapManager::Destroy()
 {
-	// Выводим список не очищенных блоков перед удалением кучи
+	// Р’С‹РІРѕРґРёРј СЃРїРёСЃРѕРє РЅРµ РѕС‡РёС‰РµРЅРЅС‹С… Р±Р»РѕРєРѕРІ РїРµСЂРµРґ СѓРґР°Р»РµРЅРёРµРј РєСѓС‡Рё
 	for( auto it = allocatedBlocks.begin(); it != allocatedBlocks.end(); ++it ) {
 		std::cout << (lpvReservedMem + *it) << " " << *(lpvReservedMem + *it) << std::endl;
 	}
